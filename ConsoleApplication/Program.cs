@@ -1,10 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using GoogleReaderAPI2;
 using Tools;
-using System;
 
-namespace GoogleReaderAPI2
+namespace ConsoleApplication
 {
     class Program
     {
@@ -12,9 +15,9 @@ namespace GoogleReaderAPI2
         {
             //  TODO: enter your google account information here
             string email = "josefwurzel1980@googlemail.com";
-            string password = "sapchikauda";
+            string password = "";
 
-            
+
 
             if (string.IsNullOrEmpty(password))
             {
@@ -62,7 +65,7 @@ namespace GoogleReaderAPI2
                                 string localFilePath = Path.Combine(dirPath, localFileName);
                                 Console.WriteLine(localFileName);
 
-                                using(WebClient webClient = new WebClient())
+                                using (WebClient webClient = new WebClient())
                                     webClient.DownloadFile(syndicationLink.Uri.OriginalString, localFilePath);
 
                             }
@@ -70,8 +73,7 @@ namespace GoogleReaderAPI2
                     }
                 }
             }
+
         }
     }
-
-
 }
