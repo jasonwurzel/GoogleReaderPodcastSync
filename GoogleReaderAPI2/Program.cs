@@ -1,19 +1,18 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Net;
-using System.Web;
+using Tools;
+using System;
 
-namespace GoogleReaderAPI
+namespace GoogleReaderAPI2
 {
-    using System;
-
     class Program
     {
         static void Main(string[] args)
         {
             //  TODO: enter your google account information here
             string email = "josefwurzel1980@googlemail.com";
-            string password = "sapchikauda";
+            string password = "";
 
             
 
@@ -45,7 +44,7 @@ namespace GoogleReaderAPI
 
                     if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == listenSubscriptions)))
                     {
-                        string dirPath = Path.Combine(baseDirPath, ToValidDirName(syndicationFeed.Title.Text));
+                        string dirPath = Path.Combine(baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
                         if (!Directory.Exists(dirPath))
                             Directory.CreateDirectory(dirPath);
 
@@ -59,7 +58,7 @@ namespace GoogleReaderAPI
                             foreach (var syndicationLink in links)
                             {
                                 Console.WriteLine(syndicationLink.Uri.OriginalString);
-                                string localFileName = item.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + ToValidFileName(item.Title.Text) + ".mp3";
+                                string localFileName = item.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + item.Title.Text.ToValidFileName() + ".mp3";
                                 string localFilePath = Path.Combine(dirPath, localFileName);
                                 Console.WriteLine(localFileName);
 
@@ -71,31 +70,6 @@ namespace GoogleReaderAPI
                     }
                 }
             }
-        }
-
-        private static string ToValidFileName(string s)
-        {
-            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidFileNameChars()).Replace("\"", "");
-        }
-
-        private static string ToValidDirName(string s)
-        {
-            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidPathChars()).Replace("\"", "");
-        }
-
-        private static string RemoveAll(string s, char[] toRemove)
-        {
-            string erg = "";
-            foreach (var c in toRemove)
-                erg = s.Replace(c.ToString(), String.Empty);
-
-            return erg;
-        }
-
-        public void Test01()
-        {
-            WebClient webClient = new WebClient();
-            webClient.DownloadFile(@"http://podcast-mp3.dradio.de/podcast/2012/03/10/dlf_20120310_1630_de6b40ac.mp3", @"c:\temp\test.mp3");
         }
     }
 

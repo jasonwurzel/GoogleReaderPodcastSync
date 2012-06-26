@@ -1,19 +1,19 @@
-﻿namespace GoogleReaderAPI
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.ServiceModel.Syndication;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using GoogleReaderAPI2.DataContracts;
+using GoogleReaderAPI2.Http;
+using GoogleReaderAPI2.Properties;
+
+namespace GoogleReaderAPI2
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.ServiceModel.Syndication;
-    using System.Text.RegularExpressions;
-    using System.Web;
-    using System.Xml;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
-
-    using GoogleReaderAPI.DataContracts;
-    using GoogleReaderAPI.Http;
-
     public class Reader : IReader
     {
         private const int MAX_ITEMS_TO_FETCH = 20;
@@ -38,7 +38,7 @@
         {
             
             LogWriter.CreateLogfile();
-            Properties.Settings.Default.authToken = "";
+            Settings.Default.authToken = "";
             const string authUrl = GOOGLE_LOGIN_ADDRESS;
 
             var reader = new Reader(source);
@@ -63,7 +63,7 @@
                 LogWriter.WriteTextToLogFile("Trying to get Auth Token");
                 authToken = new Regex(@"Auth=(?<authToken>\S+)").Match(response).Result("${authToken}");
                 LogWriter.WriteTextToLogFile("AuthToken is " + authToken);
-                Properties.Settings.Default.authToken = authToken.Trim();
+                Settings.Default.authToken = authToken.Trim();
             }
             catch (Exception e)
             {
@@ -886,7 +886,7 @@
 
         public bool enableLogOutput(bool isEnabled)
         {
-            Properties.Settings.Default.enableLogging = isEnabled;
+            Settings.Default.enableLogging = isEnabled;
             return true;
         }
 

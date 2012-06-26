@@ -1,10 +1,10 @@
-﻿namespace GoogleReaderAPI
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using GoogleReaderAPI.DataContracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using GoogleReaderAPI2.DataContracts;
 
+namespace GoogleReaderAPI2
+{
     public class TestReader : IReader
     {
         #region IReader Members

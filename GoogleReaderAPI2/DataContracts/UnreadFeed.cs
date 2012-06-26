@@ -1,14 +1,13 @@
-﻿namespace GoogleReaderAPI.DataContracts
-{
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Drawing;
-    using System.Net;
-    using System.Web;
-    using System;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Net;
+using System;
 
+namespace GoogleReaderAPI2.DataContracts
+{
     [DebuggerDisplay("Title={Title}, UnreadCount={UnreadCount}, Url={Url}")]
     public class UnreadFeed : System.ComponentModel.INotifyPropertyChanged
     {

@@ -1,16 +1,16 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace GoogleReaderAPI
+namespace Tools
 {
     public static class StringExtensions
     {
@@ -26,7 +26,7 @@ namespace GoogleReaderAPI
 
         public static string FormatWith(this string value, params object[] parameters)
         {
-            return string.Format(value, parameters);
+            return String.Format(value, parameters);
         }
 
         public static string TrimToMaxLength(this string value, int maxLength)
@@ -88,17 +88,17 @@ namespace GoogleReaderAPI
         public static bool IsNumeric(this string value)
         {
             float result;
-            return float.TryParse(value, out result);
+            return Single.TryParse(value, out result);
         }
 
         public static string ExtractDigits(this string value)
         {
-            return string.Join((string) null, Regex.Split(value, "[^\\d]"));
+            return String.Join((string) null, Regex.Split(value, "[^\\d]"));
         }
 
         public static string ConcatWith(this string value, params string[] values)
         {
-            return value + string.Concat(values);
+            return value + String.Concat(values);
         }
 
         public static Guid ToGuid(this string value)
@@ -112,7 +112,7 @@ namespace GoogleReaderAPI
             if (length != -1)
                 return value.Substring(0, length);
             else
-                return string.Empty;
+                return String.Empty;
         }
 
         public static string GetBetween(this string value, string x, string y)
@@ -120,39 +120,39 @@ namespace GoogleReaderAPI
             int num1 = value.IndexOf(x);
             int num2 = value.LastIndexOf(y);
             if (num1 == -1 || num1 == -1)
-                return string.Empty;
+                return String.Empty;
             int startIndex = num1 + x.Length;
             if (startIndex < num2)
                 return value.Substring(startIndex, num2 - startIndex).Trim();
             else
-                return string.Empty;
+                return String.Empty;
         }
 
         public static string GetAfter(this string value, string x)
         {
             int num = value.LastIndexOf(x);
             if (num == -1)
-                return string.Empty;
+                return String.Empty;
             int startIndex = num + x.Length;
             if (startIndex < value.Length)
                 return value.Substring(startIndex).Trim();
             else
-                return string.Empty;
+                return String.Empty;
         }
 
         public static string Join<T>(string separator, T[] value)
         {
             if (value == null || value.Length == 0)
-                return string.Empty;
+                return String.Empty;
             if (separator == null)
-                separator = string.Empty;
+                separator = String.Empty;
             Converter<T, string> converter = (Converter<T, string>) (o => o.ToString());
-            return string.Join(separator, Array.ConvertAll<T, string>(value, converter));
+            return String.Join(separator, Array.ConvertAll(value, converter));
         }
 
         public static string Remove(this string value, params string[] strings)
         {
-            return Enumerable.Aggregate<string, string>((IEnumerable<string>) strings, value, (Func<string, string, string>) ((current, c) => current.Replace(c, string.Empty)));
+            return Enumerable.Aggregate((IEnumerable<string>) strings, value, (Func<string, string, string>) ((current, c) => current.Replace(c, String.Empty)));
         }
 
         
@@ -181,13 +181,13 @@ namespace GoogleReaderAPI
         [Obsolete("Please use RemoveAllSpecialCharacters instead")]
         public static string AdjustInput(this string value)
         {
-            return string.Join((string) null, Regex.Split(value, "[^a-zA-Z0-9]"));
+            return String.Join((string) null, Regex.Split(value, "[^a-zA-Z0-9]"));
         }
 
         public static string RemoveAllSpecialCharacters(this string value)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            foreach (char ch in Enumerable.Where<char>((IEnumerable<char>) value, (Func<char, bool>) (c =>
+            foreach (char ch in Enumerable.Where((IEnumerable<char>) value, (Func<char, bool>) (c =>
                                                                                                           {
                                                                                                               if ((int) c >= 48 && (int) c <= 57 || (int) c >= 65 && (int) c <= 90)
                                                                                                                   return true;
@@ -225,6 +225,25 @@ namespace GoogleReaderAPI
             encoding = encoding ?? Encoding.UTF8;
             byte[] bytes = Convert.FromBase64String(encodedValue);
             return encoding.GetString(bytes);
+        }
+
+        public static string ToValidFileName(this string s)
+        {
+            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidFileNameChars()).Replace("\"", "");
+        }
+
+        public static string ToValidDirName(this string s)
+        {
+            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidPathChars()).Replace("\"", "");
+        }
+
+        public static string RemoveAll(this string s, char[] toRemove)
+        {
+            string erg = "";
+            foreach (var c in toRemove)
+                erg = s.Replace(c.ToString(), String.Empty);
+
+            return erg;
         }
     }
 }

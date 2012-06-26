@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
-namespace GoogleReaderAPI
+namespace GoogleReaderAPI2
 {
     class LogWriter
     {

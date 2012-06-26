@@ -1,9 +1,9 @@
-﻿namespace GoogleReaderAPI
-{
-    using System;
-    using System.Collections.Generic;
-    using GoogleReaderAPI.DataContracts;
+﻿using System;
+using System.Collections.Generic;
+using GoogleReaderAPI2.DataContracts;
 
+namespace GoogleReaderAPI2
+{
     public interface IReader : IDisposable
     {
         IEnumerable<UnreadFeed> GetUnreadFeedsWithItems();

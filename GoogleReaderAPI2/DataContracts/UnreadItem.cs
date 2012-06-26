@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.Generic;
-namespace GoogleReaderAPI.DataContracts
+
+namespace GoogleReaderAPI2.DataContracts
 {
     public class UnreadItem
     {

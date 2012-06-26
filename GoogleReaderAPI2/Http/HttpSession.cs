@@ -1,9 +1,9 @@
-﻿namespace GoogleReaderAPI.Http
-{
-    using System.Collections.Generic;
-    using System.Net;
-    using System.Threading;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading;
 
+namespace GoogleReaderAPI2.Http
+{
     internal class HttpSession
     {
         private Dictionary<string, Cookie> cookies = new Dictionary<string, Cookie>();

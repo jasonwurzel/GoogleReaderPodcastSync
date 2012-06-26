@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConsoleApp")]
+[assembly: AssemblyTitle("Tools")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Halvotec Information Services GmbH")]
-[assembly: AssemblyProduct("ConsoleApp")]
-[assembly: AssemblyCopyright("Copyright © Halvotec Information Services GmbH 2012")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Tools")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("bb7185ba-1490-411f-9210-a75dabeb5522")]
+[assembly: Guid("c353f43f-4a5a-49d9-adad-494c7c01e686")]
 
 // Version information for an assembly consists of the following four values:
 //

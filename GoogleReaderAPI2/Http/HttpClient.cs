@@ -1,12 +1,12 @@
-﻿namespace GoogleReaderAPI.Http
-{
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net;
-    using System.Reflection;
-    using System.Text;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Text;
 
+namespace GoogleReaderAPI2.Http
+{
     internal class HttpClient
     {
         #region Public
