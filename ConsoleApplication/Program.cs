@@ -20,8 +20,6 @@ namespace ConsoleApplication
             string email = "josefwurzel1980@googlemail.com";
             string password = "";
 
-
-
             if (string.IsNullOrEmpty(password))
             {
                 Console.WriteLine("Enter password");
@@ -31,14 +29,7 @@ namespace ConsoleApplication
             using (Reader reader = Reader.CreateReader(email, password, "scroll") as Reader)
             {
                 Console.WriteLine("Getting...");
-                // test any reader command here:
-                var unreadCount = reader.GetUnreadCount();
-
-                //foreach (var unreadFeed in reader.GetItemsByLabel("Listen Subscriptions"))
-                //{
-                //    Console.WriteLine(unreadFeed.Title);
-                //    Console.WriteLine(unreadFeed.Enclosure);
-                //}
+                
                 var listenSubscriptions = "Listen Subscriptions";
                 string baseDirPath = @"c:\temp\";
 
@@ -55,7 +46,7 @@ namespace ConsoleApplication
                             Directory.CreateDirectory(dirPath);
 
                         Console.WriteLine(unreadFeed.Url);
-                        foreach (var item in reader.GetFeed(unreadFeed.Url, 20).Items)
+                        foreach (var item in reader.GetFeed(unreadFeed.Url, 21).Items)
                         {
                             Console.WriteLine(item.PublishDate);
                             Console.WriteLine(item.Title.Text);
@@ -67,7 +58,7 @@ namespace ConsoleApplication
                                 string localFileName = item.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + item.Title.Text.ToValidFileName() + ".mp3";
                                 string localFilePath = Path.Combine(dirPath, localFileName);
                                 Console.WriteLine(localFileName);
-
+                                
                                 if (File.Exists(localFilePath))
                                     continue;
 
@@ -76,8 +67,8 @@ namespace ConsoleApplication
                                     using (WebClient webClient = new WebClient())
                                     {
                                         _downloadrunning = true;
-                                        webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
-                                        webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);
+                                        webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
+                                        webClient.DownloadFileCompleted += webClient_DownloadFileCompleted;
                                         webClient.DownloadFileAsync(new Uri(syndicationLink.Uri.OriginalString), localFilePath);
                                         while (_downloadrunning)
                                             Thread.Sleep(500);
@@ -87,7 +78,6 @@ namespace ConsoleApplication
                                 {
                                     _downloadrunning = false;
                                 }
-
                             }
                         }
                     }
@@ -98,12 +88,16 @@ namespace ConsoleApplication
 
         static void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
+            Console.WriteLine();
             _downloadrunning = false;
         }
 
         static void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            Console.WriteLine("Received {0} percent", (float)(100.0 * e.BytesReceived / e.TotalBytesToReceive));
+            Console.Write("\x000D                                  ");
+            Console.Write("\x000DReceived {0} percent", (int)(100.0 * e.BytesReceived / e.TotalBytesToReceive));
         }
     }
+
+
 }
