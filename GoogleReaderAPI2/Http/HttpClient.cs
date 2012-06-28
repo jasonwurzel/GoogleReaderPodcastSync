@@ -116,7 +116,7 @@ namespace GoogleReaderAPI2.Http
             {
                 string result = reader.ReadToEnd();
                 LogWriter.WriteTextToLogFile("Result (partly): " + result.Substring(0, System.Math.Min(100,result.Length)));
-                if (result.Contains(Resources.GoogleAuthErrorMessage) || result.Contains(Resources.GoogleRequiredFieldBlankErrorMessage))
+                if (result.Contains(Resource.GoogleAuthErrorMessage) || result.Contains(Resource.GoogleRequiredFieldBlankErrorMessage))
                     throw new GoogleAuthenticationException();
                 response.Close();
                 

@@ -227,14 +227,16 @@ namespace Tools
             return encoding.GetString(bytes);
         }
 
+        private static readonly string[] _invalidPathChars = new[] { "\\", "/", ":", "*", "?", "<", ">", "|", "\"" };
+
         public static string ToValidFileName(this string s)
         {
-            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidFileNameChars()).Replace("\"", "");
+            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidFileNameChars()).Remove(_invalidPathChars);
         }
 
         public static string ToValidDirName(this string s)
         {
-            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidPathChars()).Replace("\"", "");
+            return RemoveAll(HttpUtility.HtmlDecode(s), Path.GetInvalidPathChars()).Replace("\"", "").Remove(_invalidPathChars);
         }
 
         public static string RemoveAll(this string s, char[] toRemove)

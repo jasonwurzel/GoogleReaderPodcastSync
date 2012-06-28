@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using GoogleReaderAPI2;
 using Tools;
 
@@ -11,6 +12,8 @@ namespace ConsoleApplication
 {
     class Program
     {
+        private static bool _downloadrunning;
+
         static void Main(string[] args)
         {
             //  TODO: enter your google account information here
@@ -52,7 +55,7 @@ namespace ConsoleApplication
                             Directory.CreateDirectory(dirPath);
 
                         Console.WriteLine(unreadFeed.Url);
-                        foreach (var item in reader.GetFeed(unreadFeed.Url, 1).Items)
+                        foreach (var item in reader.GetFeed(unreadFeed.Url, 20).Items)
                         {
                             Console.WriteLine(item.PublishDate);
                             Console.WriteLine(item.Title.Text);
@@ -65,8 +68,25 @@ namespace ConsoleApplication
                                 string localFilePath = Path.Combine(dirPath, localFileName);
                                 Console.WriteLine(localFileName);
 
-                                using (WebClient webClient = new WebClient())
-                                    webClient.DownloadFile(syndicationLink.Uri.OriginalString, localFilePath);
+                                if (File.Exists(localFilePath))
+                                    continue;
+
+                                try
+                                {
+                                    using (WebClient webClient = new WebClient())
+                                    {
+                                        _downloadrunning = true;
+                                        webClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(webClient_DownloadProgressChanged);
+                                        webClient.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(webClient_DownloadFileCompleted);
+                                        webClient.DownloadFileAsync(new Uri(syndicationLink.Uri.OriginalString), localFilePath);
+                                        while (_downloadrunning)
+                                            Thread.Sleep(500);
+                                    }
+                                }
+                                finally
+                                {
+                                    _downloadrunning = false;
+                                }
 
                             }
                         }
@@ -74,6 +94,16 @@ namespace ConsoleApplication
                 }
             }
 
+        }
+
+        static void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        {
+            _downloadrunning = false;
+        }
+
+        static void webClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            Console.WriteLine("Received {0} percent", (float)(100.0 * e.BytesReceived / e.TotalBytesToReceive));
         }
     }
 }

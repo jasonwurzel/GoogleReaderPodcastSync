@@ -6,7 +6,7 @@ namespace GoogleReaderAPI2
     class LogWriter
     {
         static private string LogFilePathAndName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Desktop Google Reader\\API.txt";
-        static private bool isEnabled = false;
+        static private bool isEnabled = true;
 
         public static void CreateLogfile()
         {
