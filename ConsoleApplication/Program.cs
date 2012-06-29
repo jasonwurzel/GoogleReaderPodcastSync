@@ -46,8 +46,9 @@ namespace ConsoleApplication
                 ensureDownloadDirectoryForFeed.Result += getRemoteAndLocalAddress.ProcessDirPath;
                 getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
                 getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
-                filterExistingFiles.Result += downloadFile.Process;
-                filterExistingFiles.Result += _ => podCastsdownloaded++;
+                filterExistingFiles.ResultForNotExistingFile += downloadFile.Process;
+                filterExistingFiles.ResultForNotExistingFile += _ => podCastsdownloaded++;
+                filterExistingFiles.ResultForExistingFile += _ => Console.Clear();
 
                 getFeedsWithGivenLabel.Process(listenSubscriptions);
                 
@@ -63,9 +64,12 @@ namespace ConsoleApplication
         public void Process(RemoteAndLocalAddress address)
         {
             if (!File.Exists(address.LocalAddress))
-                Result(address);
+                ResultForNotExistingFile(address);
+            else
+                ResultForExistingFile(address);
         }
 
-        public event Action<RemoteAndLocalAddress> Result;
+        public event Action<RemoteAndLocalAddress> ResultForNotExistingFile;
+        public event Action<RemoteAndLocalAddress> ResultForExistingFile;
     }
 }

@@ -30,7 +30,10 @@ namespace ConsoleApplication
                 string localFileName = _podcastLink.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + _podcastLink.Title.ToValidFileName() + ".mp3";
                 var localFilePath = Path.Combine(_dirPath, localFileName);
                 Console.WriteLine(localFileName);
-                Result(new RemoteAndLocalAddress(remoteAdress, localFilePath)); 
+                Result(new RemoteAndLocalAddress(remoteAdress, localFilePath));
+
+                _podcastLink = null;
+                _dirPath = null;
             }
         }
 
