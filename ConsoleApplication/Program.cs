@@ -4,6 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.ServiceModel.Syndication;
 using System.Text;
 using System.Threading;
 using GoogleReaderAPI2;
@@ -19,6 +20,7 @@ namespace ConsoleApplication
             string email = "josefwurzel1980@googlemail.com";
             string password = "";
             string baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
+            int itemsToGetPerFeed = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["ItemsPerFeed"]) ? "10" : ConfigurationManager.AppSettings["ItemsPerFeed"]);
 
             if (string.IsNullOrEmpty(password))
             {
@@ -26,51 +28,38 @@ namespace ConsoleApplication
                 password = Console.ReadLine();
             }
 
+            Console.Clear();
+
             using (Reader reader = Reader.CreateReader(email, password, "scroll") as Reader)
             {
                 Console.WriteLine("Getting...");
-                
+
                 var listenSubscriptions = "Listen Subscriptions";
 
+                int podCastsdownloaded = 0;
 
-                foreach (var unreadFeed in reader.GetUnreadFeeds())
+                foreach (var urlAndFeed in GetFeedsWithGivenLabel.Process(reader, listenSubscriptions))
                 {
-                    // Leider Umweg nötig
-                    var syndicationFeed = reader.GetFeed(unreadFeed.Url, 1);
+                    // fork
+                    var dirPath = EnsureDownloadDirectoryForFeed.Process(urlAndFeed.Feed, baseDirPath);
 
-                    if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == listenSubscriptions)))
+                    // join...
+                    foreach (var podcastLink in GetPodcastLinksFromFeed.Process(reader, urlAndFeed.Url, itemsToGetPerFeed))
                     {
-                        string dirPath = Path.Combine(baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
-                        if (!Directory.Exists(dirPath))
-                            Directory.CreateDirectory(dirPath);
+                        var remoteAndLocalAddress = GetRemoteAndLocalAddress.Process(dirPath, podcastLink);
 
-                        Console.WriteLine(unreadFeed.Url);
-                        foreach (var item in reader.GetFeed(unreadFeed.Url, 20).Items)
-                        {
-                            Console.WriteLine(item.PublishDate);
-                            Console.WriteLine(item.Title.Text);
-                            Console.WriteLine("File:");
-                            var links = item.Links.Where(l => l.RelationshipType.ToLower() == "enclosure");
-                            foreach (var syndicationLink in links)
-                            {
-                                string remoteAdress = syndicationLink.Uri.OriginalString;
-                                Console.WriteLine(syndicationLink.Uri.OriginalString);
-                                string localFileName = item.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + item.Title.Text.ToValidFileName() + ".mp3";
-                                string localFilePath = Path.Combine(dirPath, localFileName);
-                                Console.WriteLine(localFileName);
-                                
-                                if (File.Exists(localFilePath))
-                                    continue;
+                        if (File.Exists(remoteAndLocalAddress.LocalAddress))
+                            continue;
 
-                                DownloadFile.Process(localFilePath, remoteAdress);
-                            }
-                        }
+                        DownloadFile.Process(remoteAndLocalAddress);
+
+                        podCastsdownloaded++;
+
+                        Console.Clear();
                     }
                 }
+                Console.WriteLine("Podcasts downloaded: {0}", podCastsdownloaded);
             }
-
         }
     }
-
-
 }

@@ -1,12 +1,13 @@
 using System;
 using System.Net;
 using System.Threading;
+using ConsoleApplication;
 
 static internal class DownloadFile
 {
     private static bool _downloadrunning;
 
-    public static void Process(string localFilePath, string remoteAdress)
+    public static void Process(RemoteAndLocalAddress remoteAndLocalAddress)
     {
         try
         {
@@ -15,7 +16,7 @@ static internal class DownloadFile
                 _downloadrunning = true;
                 webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
                 webClient.DownloadFileCompleted += webClient_DownloadFileCompleted;
-                webClient.DownloadFileAsync(new Uri(remoteAdress), localFilePath);
+                webClient.DownloadFileAsync(new Uri(remoteAndLocalAddress.RemoteAddress), remoteAndLocalAddress.LocalAddress);
                 while (_downloadrunning)
                     Thread.Sleep(500);
             }
