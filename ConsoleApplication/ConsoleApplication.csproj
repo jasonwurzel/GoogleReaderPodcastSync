@@ -48,11 +48,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DownloadFile.cs" />
+    <Compile Include="EnsureDownloadDirectoryForFeed.cs" />
+    <Compile Include="GetFeedsWithGivenLabel.cs" />
+    <Compile Include="GetPodcastLinksFromFeed.cs" />
+    <Compile Include="GetRemoteAndLocalAddress.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadPasswordFromConsole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GoogleReaderAPI2\GoogleReaderAPI2.csproj">

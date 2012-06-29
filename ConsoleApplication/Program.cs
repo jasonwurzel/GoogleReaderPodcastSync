@@ -17,49 +17,55 @@ namespace ConsoleApplication
         static void Main(string[] args)
         {
             //  TODO: enter your google account information here
-            string email = "josefwurzel1980@googlemail.com";
-            string password = "";
+            string email = ConfigurationManager.AppSettings["GoogleAccount"];
             string baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
             int itemsToGetPerFeed = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["ItemsPerFeed"]) ? "10" : ConfigurationManager.AppSettings["ItemsPerFeed"]);
+            var listenSubscriptions = "Listen Subscriptions";
+            int podCastsdownloaded = 0;
+            string password = "";
 
-            if (string.IsNullOrEmpty(password))
-            {
-                Console.WriteLine("Enter password");
-                password = Console.ReadLine();
-            }
+            ReadPasswordFromConsole readPasswordFromConsole = new ReadPasswordFromConsole();
+            readPasswordFromConsole.Result += s => password = s;
+            readPasswordFromConsole.Process();
 
             Console.Clear();
 
+            // Until i came up with a solution how to deal with IDisposable, the flow is interrupted here...
             using (Reader reader = Reader.CreateReader(email, password, "scroll") as Reader)
             {
-                Console.WriteLine("Getting...");
 
-                var listenSubscriptions = "Listen Subscriptions";
+                GetFeedsWithGivenLabel getFeedsWithGivenLabel = new GetFeedsWithGivenLabel(reader);
+                EnsureDownloadDirectoryForFeed ensureDownloadDirectoryForFeed = new EnsureDownloadDirectoryForFeed(baseDirPath);
+                GetPodcastLinksFromFeed getPodcastLinksFromFeed = new GetPodcastLinksFromFeed(reader, itemsToGetPerFeed);
+                GetRemoteAndLocalAddress getRemoteAndLocalAddress = new GetRemoteAndLocalAddress();
+                FilterExistingFiles filterExistingFiles = new FilterExistingFiles();
+                DownloadFile downloadFile = new DownloadFile();
 
-                int podCastsdownloaded = 0;
+                getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
+                getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
+                ensureDownloadDirectoryForFeed.Result += getRemoteAndLocalAddress.ProcessDirPath;
+                getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
+                getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
+                filterExistingFiles.Result += downloadFile.Process;
+                filterExistingFiles.Result += _ => podCastsdownloaded++;
 
-                foreach (var urlAndFeed in GetFeedsWithGivenLabel.Process(reader, listenSubscriptions))
-                {
-                    // fork
-                    var dirPath = EnsureDownloadDirectoryForFeed.Process(urlAndFeed.Feed, baseDirPath);
-
-                    // join...
-                    foreach (var podcastLink in GetPodcastLinksFromFeed.Process(reader, urlAndFeed.Url, itemsToGetPerFeed))
-                    {
-                        var remoteAndLocalAddress = GetRemoteAndLocalAddress.Process(dirPath, podcastLink);
-
-                        if (File.Exists(remoteAndLocalAddress.LocalAddress))
-                            continue;
-
-                        DownloadFile.Process(remoteAndLocalAddress);
-
-                        podCastsdownloaded++;
-
-                        Console.Clear();
-                    }
-                }
+                getFeedsWithGivenLabel.Process(listenSubscriptions);
+                
                 Console.WriteLine("Podcasts downloaded: {0}", podCastsdownloaded);
+
+                Console.ReadLine();
             }
         }
+    }
+
+    public class FilterExistingFiles
+    {
+        public void Process(RemoteAndLocalAddress address)
+        {
+            if (!File.Exists(address.LocalAddress))
+                Result(address);
+        }
+
+        public event Action<RemoteAndLocalAddress> Result;
     }
 }
