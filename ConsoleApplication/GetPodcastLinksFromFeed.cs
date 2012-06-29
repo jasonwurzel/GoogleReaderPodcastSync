@@ -6,7 +6,35 @@ using GoogleReaderAPI2;
 
 namespace ConsoleApplication
 {
-    internal class PodcastLinkInformation
+    public class GetPodcastLinksFromFeed
+    {
+        private Reader _reader;
+        private int _itemsToGetPerFeed;
+
+        public GetPodcastLinksFromFeed(Reader reader, int itemsToGetPerFeed)
+        {
+            _reader = reader;
+            _itemsToGetPerFeed = itemsToGetPerFeed;
+        }
+
+        // Better it would be to process only a string (url), but one step at a time!
+        public void Process(string feedUrl)
+        {
+            foreach (var item in _reader.GetFeed(feedUrl, _itemsToGetPerFeed).Items)
+            {
+                Console.WriteLine(item.PublishDate);
+                Console.WriteLine(item.Title.Text);
+                Console.WriteLine("File:");
+                var links = item.Links.Where(l => l.RelationshipType.ToLower() == "enclosure");
+                foreach (var syndicationLink in links)
+                    Result(new PodcastLinkInformation(syndicationLink.Uri.OriginalString, item.PublishDate, item.Title.Text));
+            }
+        }
+
+        public event Action<PodcastLinkInformation> Result;
+    }
+
+    public class PodcastLinkInformation
     {
         public PodcastLinkInformation(string fileAddress, DateTimeOffset publishDate, string title)
         {
@@ -21,20 +49,3 @@ namespace ConsoleApplication
     }
 }
 
-static internal class GetPodcastLinksFromFeed
-{
-    public static IEnumerable<PodcastLinkInformation> Process(Reader reader, string feedUrl, int itemsToGetPerFeed)
-    {
-        foreach (var item in reader.GetFeed(feedUrl, itemsToGetPerFeed).Items)
-        {
-            Console.WriteLine(item.PublishDate);
-            Console.WriteLine(item.Title.Text);
-            Console.WriteLine("File:");
-            var links = item.Links.Where(l => l.RelationshipType.ToLower() == "enclosure");
-            foreach (var syndicationLink in links)
-            {
-                yield return new PodcastLinkInformation(syndicationLink.Uri.OriginalString, item.PublishDate, item.Title.Text);
-            }
-        }
-    }
-}

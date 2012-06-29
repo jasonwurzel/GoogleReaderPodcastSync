@@ -1,14 +1,28 @@
+using System;
 using System.IO;
 using System.ServiceModel.Syndication;
 using Tools;
 
-static internal class EnsureDownloadDirectoryForFeed
+namespace ConsoleApplication
 {
-    public static string Process(SyndicationFeed syndicationFeed, string baseDirPath)
+    public class EnsureDownloadDirectoryForFeed
     {
-        string dirPath = Path.Combine(baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
-        if (!Directory.Exists(dirPath))
-            Directory.CreateDirectory(dirPath);
-        return dirPath;
+        private string _baseDirPath;
+
+        public EnsureDownloadDirectoryForFeed(string baseDirPath)
+        {
+            _baseDirPath = baseDirPath;
+        }
+
+        public void Process(SyndicationFeed syndicationFeed)
+        {
+            string dirPath = Path.Combine(_baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
+            
+            Result(dirPath);
+        }
+
+        public event Action<string> Result;
     }
 }

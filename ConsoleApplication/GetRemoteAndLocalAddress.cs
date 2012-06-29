@@ -4,20 +4,41 @@ using Tools;
 
 namespace ConsoleApplication
 {
-    static internal class GetRemoteAndLocalAddress
+    public class GetRemoteAndLocalAddress
     {
-        public static RemoteAndLocalAddress Process(string dirPath, PodcastLinkInformation podcastLink)
+        private PodcastLinkInformation _podcastLink;
+        private string _dirPath;
+
+        public void ProcessDirPath(string dirPath)
         {
-            string remoteAdress = podcastLink.FileAddress;
-            Console.WriteLine(remoteAdress);
-            string localFileName = podcastLink.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + podcastLink.Title.ToValidFileName() + ".mp3";
-            var localFilePath = Path.Combine(dirPath, localFileName);
-            Console.WriteLine(localFileName);
-            return new RemoteAndLocalAddress(remoteAdress, localFilePath);
+            _dirPath = dirPath;
+            ProcessDirPathAndPodcastInformation();
         }
+
+        public void ProcessPodcastLinkInformation(PodcastLinkInformation podcastLink)
+        {
+            _podcastLink = podcastLink;
+            ProcessDirPathAndPodcastInformation();
+        }
+
+        private void ProcessDirPathAndPodcastInformation()
+        {
+            if (_dirPath != null && _podcastLink != null)
+            {
+                string remoteAdress = _podcastLink.FileAddress;
+                Console.WriteLine(remoteAdress);
+                string localFileName = _podcastLink.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + _podcastLink.Title.ToValidFileName() + ".mp3";
+                var localFilePath = Path.Combine(_dirPath, localFileName);
+                Console.WriteLine(localFileName);
+                Result(new RemoteAndLocalAddress(remoteAdress, localFilePath)); 
+            }
+        }
+
+
+        public event Action<RemoteAndLocalAddress> Result;
     }
 
-    internal class RemoteAndLocalAddress
+    public class RemoteAndLocalAddress
     {
         public RemoteAndLocalAddress(string remoteAdress, string localFilePath)
         {

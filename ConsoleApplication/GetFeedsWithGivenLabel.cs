@@ -6,36 +6,48 @@ using GoogleReaderAPI2;
 
 namespace ConsoleApplication
 {
-    static internal class GetFeedsWithGivenLabel
+    public class GetFeedsWithGivenLabel
     {
-        public static IEnumerable<UrlAndFeed> Process(Reader reader, string labelName)
+        private Reader _reader;
+
+        public GetFeedsWithGivenLabel(Reader reader)
         {
-            foreach (var unreadFeed in reader.GetUnreadFeeds())
+            _reader = reader;
+        }
+
+        public void Process(string labelName)
+        {
+            foreach (var unreadFeed in _reader.GetUnreadFeeds())
             {
                 // Leider Umweg nötig
-                var syndicationFeed = reader.GetFeed(unreadFeed.Url, 1);
+                var syndicationFeed = _reader.GetFeed(unreadFeed.Url, 1);
 
                 if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == labelName)))
                 {
                     string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
                     Console.WriteLine("Checking Feed {0} for Items.", url);
-                    yield return new UrlAndFeed(url, syndicationFeed);
+
+                    Result(new UrlAndFeed(url, syndicationFeed));
                 }
             }
         }
 
-        internal class UrlAndFeed
-        {
-            public UrlAndFeed(string url, SyndicationFeed syndicationFeed)
-            {
-                Url = url;
-                Feed = syndicationFeed;
-            }
+        public event Action<UrlAndFeed> Result;
 
-            public SyndicationFeed Feed { get; set; }
-
-            public string Url { get; set; }
-        }
 
     }
+
+    public class UrlAndFeed
+    {
+        public UrlAndFeed(string url, SyndicationFeed syndicationFeed)
+        {
+            Url = url;
+            Feed = syndicationFeed;
+        }
+
+        public SyndicationFeed Feed { get; set; }
+
+        public string Url { get; set; }
+    }
+
 }
