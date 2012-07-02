@@ -10,6 +10,12 @@ namespace ConsoleApplication
     {
         private IEnumerable<PodcastLinkInformation> _podcastLinks;
         private string _dirPath;
+        private Func<PodcastLinkInformation, string> _getLocalFileName;
+
+        public GetRemoteAndLocalAddress(Func<PodcastLinkInformation, string> getLocalFileName)
+        {
+            _getLocalFileName = getLocalFileName;
+        }
 
         public void ProcessDirPath(string dirPath)
         {
@@ -31,7 +37,8 @@ namespace ConsoleApplication
                 {
                     string remoteAdress = link.FileAddress;
                     Console.WriteLine(remoteAdress);
-                    string localFileName = link.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + link.Title.ToValidFileName() + ".mp3";
+                    string localFileName = _getLocalFileName(link);
+                    //string localFileName = link.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + link.Title.ToValidFileName() + ".mp3";
                     var localFilePath = Path.Combine(_dirPath, localFileName);
                     Console.WriteLine(localFileName);
                     Result(new RemoteAndLocalAddress(remoteAdress, localFilePath));
