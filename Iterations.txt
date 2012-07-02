@@ -1,0 +1,4 @@
+Next Steps:
+
+- evaluate NPanthaRei, maybe incorporate it
+- Multithreading: X downloads at the same time
