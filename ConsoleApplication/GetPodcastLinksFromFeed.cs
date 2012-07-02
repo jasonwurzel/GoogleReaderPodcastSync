@@ -26,12 +26,11 @@ namespace ConsoleApplication
                 Console.WriteLine(item.Title.Text);
                 Console.WriteLine("File:");
                 var links = item.Links.Where(l => l.RelationshipType.ToLower() == "enclosure");
-                foreach (var syndicationLink in links)
-                    Result(new PodcastLinkInformation(syndicationLink.Uri.OriginalString, item.PublishDate, item.Title.Text));
+                Result(links.Select(l => new PodcastLinkInformation(l.Uri.OriginalString, item.PublishDate, item.Title.Text)));
             }
         }
 
-        public event Action<PodcastLinkInformation> Result;
+        public event Action<IEnumerable<PodcastLinkInformation>> Result;
     }
 
     public class PodcastLinkInformation

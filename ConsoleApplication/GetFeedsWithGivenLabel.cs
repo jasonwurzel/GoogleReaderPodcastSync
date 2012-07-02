@@ -24,6 +24,7 @@ namespace ConsoleApplication
 
                 if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == labelName)))
                 {
+                    OnFeedFound();
                     string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
                     Console.WriteLine("Checking Feed {0} for Items.", url);
 
@@ -33,6 +34,7 @@ namespace ConsoleApplication
         }
 
         public event Action<UrlAndFeed> Result;
+        public event Action OnFeedFound;
 
 
     }

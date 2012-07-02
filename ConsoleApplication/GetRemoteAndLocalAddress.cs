@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.IO;
 using Tools;
 
@@ -6,7 +8,7 @@ namespace ConsoleApplication
 {
     public class GetRemoteAndLocalAddress
     {
-        private PodcastLinkInformation _podcastLink;
+        private IEnumerable<PodcastLinkInformation> _podcastLinks;
         private string _dirPath;
 
         public void ProcessDirPath(string dirPath)
@@ -15,24 +17,26 @@ namespace ConsoleApplication
             ProcessDirPathAndPodcastInformation();
         }
 
-        public void ProcessPodcastLinkInformation(PodcastLinkInformation podcastLink)
+        public void ProcessPodcastLinkInformation(IEnumerable<PodcastLinkInformation> podcastLinks)
         {
-            _podcastLink = podcastLink;
+            _podcastLinks = podcastLinks;
             ProcessDirPathAndPodcastInformation();
         }
 
         private void ProcessDirPathAndPodcastInformation()
         {
-            if (_dirPath != null && _podcastLink != null)
+            if (_dirPath != null && _podcastLinks != null)
             {
-                string remoteAdress = _podcastLink.FileAddress;
-                Console.WriteLine(remoteAdress);
-                string localFileName = _podcastLink.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + _podcastLink.Title.ToValidFileName() + ".mp3";
-                var localFilePath = Path.Combine(_dirPath, localFileName);
-                Console.WriteLine(localFileName);
-                Result(new RemoteAndLocalAddress(remoteAdress, localFilePath));
-
-                _podcastLink = null;
+                foreach (var link in _podcastLinks)
+                {
+                    string remoteAdress = link.FileAddress;
+                    Console.WriteLine(remoteAdress);
+                    string localFileName = link.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + link.Title.ToValidFileName() + ".mp3";
+                    var localFilePath = Path.Combine(_dirPath, localFileName);
+                    Console.WriteLine(localFileName);
+                    Result(new RemoteAndLocalAddress(remoteAdress, localFilePath));
+                }
+                _podcastLinks = null;
                 _dirPath = null;
             }
         }

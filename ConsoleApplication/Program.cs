@@ -16,7 +16,6 @@ namespace ConsoleApplication
     {
         static void Main(string[] args)
         {
-            //  TODO: enter your google account information here
             string email = ConfigurationManager.AppSettings["GoogleAccount"];
             string baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
             int itemsToGetPerFeed = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["ItemsPerFeed"]) ? "10" : ConfigurationManager.AppSettings["ItemsPerFeed"]);
@@ -30,7 +29,7 @@ namespace ConsoleApplication
 
             Console.Clear();
 
-            // Until i came up with a solution how to deal with IDisposable, the flow is interrupted here...
+            // Until i come up with a solution how to deal with IDisposable, the flow is interrupted here...
             using (Reader reader = Reader.CreateReader(email, password, "scroll") as Reader)
             {
 
@@ -43,6 +42,7 @@ namespace ConsoleApplication
 
                 getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
                 getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
+                getFeedsWithGivenLabel.OnFeedFound += Console.Clear;
                 ensureDownloadDirectoryForFeed.Result += getRemoteAndLocalAddress.ProcessDirPath;
                 getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
                 getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
