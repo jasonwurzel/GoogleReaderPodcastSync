@@ -26,8 +26,7 @@ namespace ConsoleApplication
             int podCastsdownloaded = 0;
             string password = "";
             string dateFormat = "yyyyMMddTHHmmss";
-            string dateRegex = "3";
-            int deleteFilesOlderThanXDays = 2;
+            int deleteFilesOlderThanXDays = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["KeepFilesForXDays"]) ? "7" : ConfigurationManager.AppSettings["KeepFilesForXDays"]);
 
 
             ReadPasswordFromConsole readPasswordFromConsole = new ReadPasswordFromConsole();
