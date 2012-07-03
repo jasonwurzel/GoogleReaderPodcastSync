@@ -26,8 +26,8 @@ namespace ConsoleApplication
 
             foreach (var item in _reader.GetFeed(feedUrl, _itemsToGetPerFeed).Items)
             {
-                Console.WriteLine(item.PublishDate);
-                Console.WriteLine(item.Title.Text);
+                //Console.WriteLine(item.PublishDate);
+                //Console.WriteLine(item.Title.Text);
                 var links = item.Links.Where(l => l.RelationshipType.ToLower() == "enclosure");
                 SyndicationItem item1 = item;
                 listOfLinks.AddRange(EnumerableExtensions.Select(links, l => new PodcastLinkInformation(l.Uri.OriginalString, item1.PublishDate, item1.Title.Text)));

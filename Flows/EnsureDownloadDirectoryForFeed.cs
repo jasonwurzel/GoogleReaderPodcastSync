@@ -24,5 +24,14 @@ namespace ConsoleApplication
         }
 
         public event Action<string> Result;
+
+        public string ProcessNPR(SyndicationFeed syndicationFeed)
+        {
+            string dirPath = Path.Combine(_baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
+            if (!Directory.Exists(dirPath))
+                Directory.CreateDirectory(dirPath);
+
+            return dirPath;
+        }
     }
 }

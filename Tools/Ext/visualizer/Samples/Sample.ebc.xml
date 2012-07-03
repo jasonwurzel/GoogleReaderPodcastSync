@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<board name="Mainboard" >
+  <using namespace="System.Collections.Generic" />
+  <using namespace="data.contracts" />
+  <using namespace="data.contracts.messages" />
+  <using namespace="ebcpatterns" />
+  
+  <wire from="this.Run" type="Tuple&lt;string,string&gt;" to="(Split2&lt;Tuple&lt;string,string&gt;&gt; split1).Input" />
+  <wire from="(Split2&lt;Tuple&lt;string,string&gt;&gt; split1).Output1" type="Tuple&lt;string,string&gt;" to="filter1.Input" />
+  <wire from="(Split2&lt;Tuple&lt;string,string&gt;&gt; split1).Output2" type="Tuple&lt;string,string&gt;" to="filter2.Input" />
+
+  <wire from="filter1.Output" type="string" to="split2.Input" />
+  <wire from="split2.Output1" type="string" to="ebcDateinamenErmitteln.In_Process" />
+  <wire from="split2.Output2" type="string" to="defaultNamespace.In_Process" />
+
+  <wire from="ebcDateinamenErmitteln.Out_Result" type="IEnumerable&lt;string&gt;" to="join1.Input1" />
+  <wire from="defaultNamespace.Out_Result" type="string" to="join1.Input2" />
+  <wire from="join1.Output" type="BuildBoardsMessage" to="modelBuilder.In_Process" />
+
+  <wire from="modelBuilder.Out_Result" type="IEnumerable&lt;Board&gt;" to="generator.In_Process" />
+  <wire from="filter2.Output" type="string" to="join2.Input1" />
+  <wire from="generator.Out_Process" type="string" to="join2.Input2" />
+
+  <wire from="join2.Output" type="Tuple&lt;string,string&gt;" to="fileAdapter.In_Process" />
+</board>

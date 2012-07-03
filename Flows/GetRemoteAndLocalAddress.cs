@@ -33,23 +33,28 @@ namespace ConsoleApplication
         {
             if (_dirPath != null && _podcastLinks != null)
             {
+                List<RemoteAndLocalAddress> list = new List<RemoteAndLocalAddress>();
+
                 foreach (var link in _podcastLinks)
                 {
                     string remoteAdress = link.FileAddress;
-                    Console.WriteLine(remoteAdress);
+                    //Console.WriteLine(remoteAdress);
                     string localFileName = _getLocalFileName(link);
                     //string localFileName = link.PublishDate.ToString("yyyyMMddTHHmmss") + "_" + link.Title.ToValidFileName() + ".mp3";
                     var localFilePath = Path.Combine(_dirPath, localFileName);
-                    Console.WriteLine(localFileName);
-                    Result(new RemoteAndLocalAddress(remoteAdress, localFilePath));
+                    //Console.WriteLine(localFileName);
+                    list.Add(new RemoteAndLocalAddress(remoteAdress, localFilePath));
                 }
+
+                Result(list);
+
                 _podcastLinks = null;
                 _dirPath = null;
             }
         }
 
 
-        public event Action<RemoteAndLocalAddress> Result;
+        public event Action<IEnumerable<RemoteAndLocalAddress>> Result;
     }
 
     public class RemoteAndLocalAddress

@@ -37,6 +37,10 @@
     <AssemblyOriginatorKeyFile>Tools.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="npantarhei.runtime, Version=1.0.4566.25939, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Ext\npantarhei.runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
@@ -107,6 +111,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Tools.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Ext\npantarhei.runtime.dll" />
+    <Content Include="Ext\npantarhei.runtime.pdb" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
