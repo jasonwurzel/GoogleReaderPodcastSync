@@ -11,24 +11,38 @@ namespace ConsoleApplication
     public class GetPodcastLinksFromFeed
     {
         private Reader _reader;
-        private int _itemsToGetPerFeed;
+        private int _getFilesFromTheLastXDays;
 
-        public GetPodcastLinksFromFeed(Reader reader, int itemsToGetPerFeed)
+        public GetPodcastLinksFromFeed(Reader reader, int getFilesFromTheLastXDays)
         {
             _reader = reader;
-            _itemsToGetPerFeed = itemsToGetPerFeed;
+            _getFilesFromTheLastXDays = getFilesFromTheLastXDays;
         }
 
         public void Process(string feedUrl)
         {
             var listOfLinks = new List<PodcastLinkInformation>();
+            // Den ganzen Tag betrachten!
+            var now = DateTime.Now;
+            var dateTime = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
+            DateTime minimumPublishDate = dateTime.AddDays(-_getFilesFromTheLastXDays);
+            DateTimeOffset actualEarliestPublishDate = dateTime;
+            int itemsToGetPerFeed = 30;
 
-            var syndicationItems = _reader.GetFeed(feedUrl, _itemsToGetPerFeed).Items;
+            IEnumerable<SyndicationItem> syndicationItems;
+            syndicationItems = _reader.GetFeed(feedUrl, itemsToGetPerFeed).Items.OrderBy(item => item.PublishDate);
+            actualEarliestPublishDate = syndicationItems.First().PublishDate;
+            while (actualEarliestPublishDate > minimumPublishDate)
+            {
+                itemsToGetPerFeed += 10;
+                syndicationItems = _reader.GetFeed(feedUrl, itemsToGetPerFeed).Items.OrderBy(item => item.PublishDate);
+                actualEarliestPublishDate = syndicationItems.First().PublishDate;
+            }
 
             if (SignalTotalCount != null)
                 SignalTotalCount(syndicationItems.Count());
 
-            foreach (var item in syndicationItems)
+            foreach (var item in syndicationItems.Where(item => item.PublishDate > minimumPublishDate))
             {
                 //Console.WriteLine(item.PublishDate);
                 //Console.WriteLine(item.Title.Text);

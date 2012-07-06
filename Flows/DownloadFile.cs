@@ -23,6 +23,7 @@ namespace ConsoleApplication
                     while (_downloadrunning)
                         Thread.Sleep(500);
                     Console.WriteLine("Finished Downloading File {0}", remoteAndLocalAddress.LocalAddress);
+                    Console.WriteLine();
                     if (Result != null)
                         Result(remoteAndLocalAddress);
                 }
@@ -38,7 +39,6 @@ namespace ConsoleApplication
         private void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             Console.WriteLine();
-            Console.Clear();
             _downloadrunning = false;
         }
 
@@ -46,7 +46,7 @@ namespace ConsoleApplication
         {
             Console.Write("\x000D                                  ");
             Console.Write("\x000DReceived {0} percent", (int)(100.0 * e.BytesReceived / e.TotalBytesToReceive));
-            Console.Write(".");
+            //Console.Write(".");
         }
     }
 }

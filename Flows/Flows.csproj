@@ -44,6 +44,7 @@
     <Compile Include="Class1.cs" />
     <Compile Include="ClearDirectoryOfFiles.cs" />
     <Compile Include="DownloadFile.cs" />
+    <Compile Include="DownloadPodcastsFromReader.cs" />
     <Compile Include="EnsureDownloadDirectoryForFeed.cs" />
     <Compile Include="FilterExistingFiles.cs" />
     <Compile Include="GetFeedsWithGivenLabel.cs" />
