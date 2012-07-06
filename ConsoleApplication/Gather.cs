@@ -37,8 +37,11 @@ namespace ConsoleApplication
                 return;
 
             resultWasRaised = true;
-            var thread = new Thread(o => Result(EnumerateTheQueue()));
-            thread.Start();
+            if (Result != null)
+            {
+                var thread = new Thread(o => Result(EnumerateTheQueue()));
+                thread.Start();
+            }
         }
 
         private IEnumerable<T> EnumerateTheQueue()

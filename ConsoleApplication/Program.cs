@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using GoogleReaderAPI2;
 using Tools;
 using Tools.DnpExtensions;
@@ -31,44 +32,32 @@ namespace ConsoleApplication
 
             GetFeedsWithGivenLabel getFeedsWithGivenLabel = new GetFeedsWithGivenLabel(listenSubscriptions);
             EnsureDownloadDirectoryForFeed ensureDownloadDirectoryForFeed = new EnsureDownloadDirectoryForFeed(baseDirPath);
-            ClearDirectoryOfFiles clearDirectoryOfFilesOlderThan = new ClearDirectoryOfFiles(dirPath =>
-                {
-                    var list = new List<string>();
-                    foreach (var filePath in Directory.GetFiles(dirPath))
-                    {
-                        var file = Path.GetFileName(filePath);
-                        var dateString = file.Substring(0, dateFormat.Length);
-                        DateTime dt = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
-                        if (dt < DateTime.Now.AddDays(-deleteFilesOlderThanXDays))
-                            list.Add(filePath);
-                    }
-                    return list;
-                });
+            ClearDirectoryOfFiles clearDirectoryOfFilesOlderThan = new ClearDirectoryOfFiles(dateFormat, deleteFilesOlderThanXDays);
             GetPodcastLinksFromFeed getPodcastLinksFromFeed = new GetPodcastLinksFromFeed(reader, itemsToGetPerFeed);
             GetRemoteAndLocalAddress getRemoteAndLocalAddress = new GetRemoteAndLocalAddress(link => link.PublishDate.ToString(dateFormat) + "_" + link.Title.ToValidFileName() + ".mp3");
             FilterExistingFiles filterExistingFiles = new FilterExistingFiles();
             DownloadFile downloadFile1 = new DownloadFile();
-            DownloadFile downloadFile2 = new DownloadFile();
+            Counter counter = new Counter();
 
-            Scatter<RemoteAndLocalAddress> scatter = new Scatter<RemoteAndLocalAddress>();
+            //ScatterStream<RemoteAndLocalAddress> scatterStream = new ScatterStream<RemoteAndLocalAddress>();
 
+            getFeedsWithGivenLabel.Result += _ => counter.CountOneFeed();
             getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
             getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
-            //getFeedsWithGivenLabel.OnFeedFound += Console.Clear;
+            
             ensureDownloadDirectoryForFeed.Result += clearDirectoryOfFilesOlderThan.Process;
             clearDirectoryOfFilesOlderThan.Result += getRemoteAndLocalAddress.ProcessDirPath;
             getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
+            getPodcastLinksFromFeed.SignalTotalCount += counter.SetItemCountToExpect;
+            getFeedsWithGivenLabel.SignalTotalCount += counter.SetFeedCountToExpect;
             getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
-            filterExistingFiles.ResultForNotExistingFile += scatter.Process;
-            scatter.Output1 += downloadFile1.Process;
-            scatter.Output2 += downloadFile2.Process;
-            filterExistingFiles.ResultForNotExistingFile += _ => podCastsdownloaded += _.Count();
-            //filterExistingFiles.ResultForExistingFile += _ => Console.Clear();
-
-            getFeedsWithGivenLabel.Process(reader);
+            filterExistingFiles.ResultForNotExistingFile += downloadFile1.Process;
+            downloadFile1.Result += _ => counter.CountOneItem();
             
-            Console.WriteLine("Podcasts downloaded: {0}", podCastsdownloaded);
+            getFeedsWithGivenLabel.Process(reader);
 
+
+            Console.WriteLine("************* Fertig **************");
             Console.ReadLine();
         }
     }

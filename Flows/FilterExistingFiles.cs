@@ -8,25 +8,22 @@ namespace ConsoleApplication
     {
         public void Process(IEnumerable<RemoteAndLocalAddress> address)
         {
-            List<RemoteAndLocalAddress> notExistingFiles = new List<RemoteAndLocalAddress>();
-
             foreach (var remoteAndLocalAddress in address)
             {
                 if (!File.Exists(remoteAndLocalAddress.LocalAddress))
-                    notExistingFiles.Add(remoteAndLocalAddress);
+                {
+                    if (ResultForNotExistingFile != null)
+                        ResultForNotExistingFile(remoteAndLocalAddress);
+                }
                 else
                 {
                     if (ResultForExistingFile != null)
                         ResultForExistingFile(remoteAndLocalAddress);
                 }
             }
-
-            ResultForNotExistingFile(notExistingFiles);
-
-
         }
 
-        public event Action<IEnumerable<RemoteAndLocalAddress>> ResultForNotExistingFile;
+        public event Action<RemoteAndLocalAddress> ResultForNotExistingFile;
         public event Action<RemoteAndLocalAddress> ResultForExistingFile;
     }
 }

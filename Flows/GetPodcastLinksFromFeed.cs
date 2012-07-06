@@ -19,12 +19,16 @@ namespace ConsoleApplication
             _itemsToGetPerFeed = itemsToGetPerFeed;
         }
 
-        // Better it would be to process only a string (url), but one step at a time!
         public void Process(string feedUrl)
         {
             var listOfLinks = new List<PodcastLinkInformation>();
 
-            foreach (var item in _reader.GetFeed(feedUrl, _itemsToGetPerFeed).Items)
+            var syndicationItems = _reader.GetFeed(feedUrl, _itemsToGetPerFeed).Items;
+
+            if (SignalTotalCount != null)
+                SignalTotalCount(syndicationItems.Count());
+
+            foreach (var item in syndicationItems)
             {
                 //Console.WriteLine(item.PublishDate);
                 //Console.WriteLine(item.Title.Text);
@@ -37,6 +41,7 @@ namespace ConsoleApplication
         }
 
         public event Action<IEnumerable<PodcastLinkInformation>> Result;
+        public event Action<int> SignalTotalCount;
     }
 
     public class PodcastLinkInformation

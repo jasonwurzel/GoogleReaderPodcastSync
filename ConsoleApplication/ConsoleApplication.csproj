@@ -47,6 +47,8 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ScatterStream.cs" />
+    <Compile Include="Counter.cs" />
     <Compile Include="Gather.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

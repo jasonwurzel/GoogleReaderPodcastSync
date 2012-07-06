@@ -17,20 +17,25 @@ namespace ConsoleApplication
 
         public void Process(Reader reader)
         {
-            foreach (var unreadFeed in reader.GetUnreadFeeds())
+            var unreadFeeds = reader.GetUnreadFeeds();
+
+            List<SyndicationFeed> feeds =
+                unreadFeeds.
+                Select(unreadFeed => reader.GetFeed(unreadFeed.Url, 1)).
+                Where(syndicationFeed => syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label))).
+                ToList();
+
+            if (SignalTotalCount != null)
+                SignalTotalCount(feeds.Count());
+
+            foreach (var syndicationFeed in feeds)
             {
-                // Leider Umweg nötig
-                var syndicationFeed = reader.GetFeed(unreadFeed.Url, 1);
+                if (OnFeedFound != null)
+                    OnFeedFound();
+                string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
+                Console.WriteLine("Checking Feed {0} for Items.", url);
 
-                if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label)))
-                {
-                    if (OnFeedFound != null)
-                        OnFeedFound();
-                    string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
-                    Console.WriteLine("Checking Feed {0} for Items.", url);
-
-                    Result(new UrlAndFeed(url, syndicationFeed));
-                }
+                Result(new UrlAndFeed(url, syndicationFeed));
             }
         }
 
@@ -58,6 +63,7 @@ namespace ConsoleApplication
         } 
 
         public event Action<UrlAndFeed> Result;
+        public event Action<int> SignalTotalCount;
         public event Action OnFeedFound;
 
 

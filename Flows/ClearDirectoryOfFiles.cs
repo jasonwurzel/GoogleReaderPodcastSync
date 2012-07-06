@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -7,19 +8,25 @@ namespace ConsoleApplication
 {
     public class ClearDirectoryOfFiles
     {
-        private Func<string, IEnumerable<string>> _findFiles;
+        private string _dateFormat;
+        private double _deleteFilesOlderThanXDays;
 
-        public ClearDirectoryOfFiles(Func<string, IEnumerable<string>> findFilesToDelete)
+        public ClearDirectoryOfFiles(string dateFormat, double deleteFilesOlderThanXDays)
         {
-            _findFiles = findFilesToDelete;
+            _dateFormat = dateFormat;
+            _deleteFilesOlderThanXDays = deleteFilesOlderThanXDays;
         }
+
         public void Process(string dirPath)
         {
-            List<string> files = new List<string>();
-
-            foreach (var file in _findFiles(dirPath).ToList())
+            var list = new List<string>();
+            foreach (var filePath in Directory.GetFiles(dirPath))
             {
-                File.Delete(file);
+                var file = Path.GetFileName(filePath);
+                var dateString = file.Substring(0, _dateFormat.Length);
+                DateTime dt = DateTime.ParseExact(dateString, _dateFormat, CultureInfo.InvariantCulture);
+                if (dt < DateTime.Now.AddDays(-_deleteFilesOlderThanXDays))
+                    File.Delete(file);
             }
 
             // einfach durchreichen
