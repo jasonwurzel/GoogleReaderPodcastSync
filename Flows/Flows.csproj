@@ -31,14 +31,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
@@ -62,6 +66,10 @@
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{dce66e14-9459-4ba9-b89e-7750d73c50be}</Project>
       <Name>Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfApplication\WpfApplication.csproj">
+      <Project>{d0d7d5e2-6af9-445e-9d27-add758c7ac77}</Project>
+      <Name>WpfApplication</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

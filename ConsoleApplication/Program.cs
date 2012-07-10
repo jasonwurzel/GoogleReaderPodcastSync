@@ -9,37 +9,52 @@ using Flows;
 using GoogleReaderAPI2;
 using Tools;
 using Tools.DnpExtensions;
+using WpfApplication;
 using npantarhei.runtime.patterns.operations;
 
 namespace ConsoleApplication
 {
     internal class Program
     {
+        private static Reader _reader;
+        private static string _email;
+        private static string _listenSubscriptions;
+        private static string _baseDirPath;
+        private static string _dateFormat;
+        private static bool _deleteOlderFiles;
+        private static int _getFilesFromTheLastXDays;
+        private static MainWindow _window;
+
+        [STAThread]
         private static void Main(string[] args)
         {
-            string email = ConfigurationManager.AppSettings["GoogleAccount"];
-            string baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
-            bool deleteOlderFiles = bool.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["DeleteOlderFiles"]) ? "false" : ConfigurationManager.AppSettings["DeleteOlderFiles"]);
-            var listenSubscriptions = "Listen Subscriptions";
-            int podCastsdownloaded = 0;
-            string dateFormat = "yyyyMMddTHHmmss";
-            int getFilesFromTheLastXDays =
+            _email = ConfigurationManager.AppSettings["GoogleAccount"];
+            _baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
+            _deleteOlderFiles = bool.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["DeleteOlderFiles"]) ? "false" : ConfigurationManager.AppSettings["DeleteOlderFiles"]);
+            _listenSubscriptions = "Listen Subscriptions";
+            _dateFormat = "yyyyMMddTHHmmss";
+            _getFilesFromTheLastXDays =
                 int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]) ? "3" : ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]);
-            Reader reader = null;
+            _reader = null;
 
-            // DeleteOlderFiles
-            // GetFilesFromTheLastXDays
+            MainWindow window = new MainWindow();
+            _window = window;
+            window.PasswordReceived += WindowOnPasswordReceived;
+            window.ShowDialog();
+        }
 
-            Console.WriteLine("Enter password");
-            var password = Console.ReadLine();
+        private static void WindowOnPasswordReceived(string password)
+        {
+            _reader = Reader.CreateReader(_email, password, "scroll") as Reader;
 
-            reader = Reader.CreateReader(email, password, "scroll") as Reader;
-
-            DownloadPodcastsFromReader downloadPodcastsFromReader = new DownloadPodcastsFromReader(listenSubscriptions, baseDirPath, dateFormat, deleteOlderFiles, reader, getFilesFromTheLastXDays);
+            DownloadPodcastsFromReader downloadPodcastsFromReader = new DownloadPodcastsFromReader(_listenSubscriptions, _baseDirPath, _dateFormat, _deleteOlderFiles, _reader, _getFilesFromTheLastXDays, _window);
             downloadPodcastsFromReader.Process();
 
             Console.WriteLine("************* Fertig **************");
             Console.ReadLine();
+
+            Thread.Sleep(5000);
+            _window.Close();
         }
     }
 }

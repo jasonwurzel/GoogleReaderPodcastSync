@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D31DA3F0-E7DD-4EA6-AF75-4B04F51AEA04}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConsoleApplication</RootNamespace>
     <AssemblyName>ConsoleApplication</AssemblyName>
@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ebcpatterns">
       <HintPath>..\Tools\Ext\ebcpatterns\ebcpatterns.dll</HintPath>
@@ -41,10 +44,14 @@
     <Reference Include="npantarhei.runtime">
       <HintPath>..\Tools\Ext\npantarhei.runtime.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ScatterStream.cs" />
@@ -71,6 +78,10 @@
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{DCE66E14-9459-4BA9-B89E-7750D73C50BE}</Project>
       <Name>Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WpfApplication\WpfApplication.csproj">
+      <Project>{d0d7d5e2-6af9-445e-9d27-add758c7ac77}</Project>
+      <Name>WpfApplication</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

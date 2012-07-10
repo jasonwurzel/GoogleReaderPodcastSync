@@ -5,6 +5,8 @@ using System.Text;
 using ConsoleApplication;
 using GoogleReaderAPI2;
 using Tools;
+using WpfApplication;
+
 
 namespace Flows
 {
@@ -16,8 +18,9 @@ namespace Flows
         private bool _deleteOlderFiles;
         private Reader _reader;
         private int _getFilesFromTheLastXDays;
+        private MainWindow _window;
 
-        public DownloadPodcastsFromReader(string listenSubscriptions, string baseDirPath, string dateFormat, bool deleteOlderFiles, Reader reader, int getFilesFromTheLastXDays)
+        public DownloadPodcastsFromReader(string listenSubscriptions, string baseDirPath, string dateFormat, bool deleteOlderFiles, Reader reader, int getFilesFromTheLastXDays, MainWindow window)
         {
             _listenSubscriptions = listenSubscriptions;
             _baseDirPath = baseDirPath;
@@ -25,6 +28,7 @@ namespace Flows
             _deleteOlderFiles = deleteOlderFiles;
             _reader = reader;
             _getFilesFromTheLastXDays = getFilesFromTheLastXDays;
+            _window = window;
         }
 
         public void Process()
@@ -36,8 +40,7 @@ namespace Flows
             GetRemoteAndLocalAddress getRemoteAndLocalAddress = new GetRemoteAndLocalAddress(link => link.PublishDate.ToString(_dateFormat) + "_" + link.Title.ToValidFileName() + ".mp3");
             FilterExistingFiles filterExistingFiles = new FilterExistingFiles();
             DownloadFile downloadFile1 = new DownloadFile();
-
-            //ScatterStream<RemoteAndLocalAddress> scatterStream = new ScatterStream<RemoteAndLocalAddress>();
+            int totalDownloads = 0;
 
             getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
             getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
@@ -47,8 +50,15 @@ namespace Flows
             getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
             getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
             filterExistingFiles.ResultForNotExistingFile += downloadFile1.Process;
+            downloadFile1.Result += _ => totalDownloads++;
+
+            getFeedsWithGivenLabel.OnFeedFound += s => _window.ShowTaskbarNotification("Checking Feed", string.Format("Address: {0}", s));
+            downloadFile1.OnDownloadStarting += address => _window.ShowTaskbarNotification("Starting Download", string.Format("Remote File: {0}", address.RemoteAddress));
+            //downloadFile1.OnDownloadFinished += address => _window.ShowTaskbarNotification("Finished Download", string.Format("Local File: {0}", address.LocalAddress));
 
             getFeedsWithGivenLabel.Process(_reader);
+
+            _window.ShowTaskbarNotification("Alle Downloads fertig!", string.Format("Anzahl Downloads: {0}", totalDownloads), 1000);
         }
 
         public event Action Result;

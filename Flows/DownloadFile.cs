@@ -15,15 +15,15 @@ namespace ConsoleApplication
             {
                 using (WebClient webClient = new WebClient())
                 {
-                    Console.WriteLine("Starting Downloading File {0}", remoteAndLocalAddress.LocalAddress);
+                    OnDownloadStarting(remoteAndLocalAddress);
                     _downloadrunning = true;
                     webClient.DownloadProgressChanged += webClient_DownloadProgressChanged;
                     webClient.DownloadFileCompleted += webClient_DownloadFileCompleted;
-                    webClient.DownloadFileAsync(new Uri(remoteAndLocalAddress.RemoteAddress), remoteAndLocalAddress.LocalAddress);
-                    while (_downloadrunning)
-                        Thread.Sleep(500);
-                    Console.WriteLine("Finished Downloading File {0}", remoteAndLocalAddress.LocalAddress);
-                    Console.WriteLine();
+                    //webClient.DownloadFileAsync(new Uri(remoteAndLocalAddress.RemoteAddress), remoteAndLocalAddress.LocalAddress);
+                    webClient.DownloadFile(remoteAndLocalAddress.RemoteAddress, remoteAndLocalAddress.LocalAddress);
+                    //while (_downloadrunning)
+                    //    Thread.Sleep(500);
+                    OnDownloadFinished(remoteAndLocalAddress);
                     if (Result != null)
                         Result(remoteAndLocalAddress);
                 }
@@ -34,11 +34,12 @@ namespace ConsoleApplication
             }
         }
 
-        public event Action<RemoteAndLocalAddress> Result;
+        public event Action<RemoteAndLocalAddress> Result = address => { };
+        public event Action<RemoteAndLocalAddress> OnDownloadStarting = address => { };
+        public event Action<RemoteAndLocalAddress> OnDownloadFinished = address => { };
 
         private void webClient_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            Console.WriteLine();
             _downloadrunning = false;
         }
 

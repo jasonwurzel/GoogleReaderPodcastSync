@@ -1,0 +1,10 @@
+﻿<Window x:Class="WpfApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="89" Width="294">
+    <Grid>
+        <Label Content="Passwort:&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="67" Height="24"/>
+        <PasswordBox x:Name="_txtPasswort" HorizontalAlignment="Left" Margin="82,14,0,0" VerticalAlignment="Top" Width="186" KeyDown="_txtPasswort_KeyDown"/>
+
+    </Grid>
+</Window>

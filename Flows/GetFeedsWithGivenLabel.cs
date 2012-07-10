@@ -30,10 +30,10 @@ namespace ConsoleApplication
 
             foreach (var syndicationFeed in feeds)
             {
-                if (OnFeedFound != null)
-                    OnFeedFound();
                 string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
-                Console.WriteLine("Checking Feed {0} for Items.", url);
+
+                if (OnFeedFound != null)
+                    OnFeedFound(url);
 
                 Result(new UrlAndFeed(url, syndicationFeed));
             }
@@ -53,9 +53,8 @@ namespace ConsoleApplication
 
                 if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label)))
                 {
-                    OnFeedFound();
                     string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
-                    Console.WriteLine("Checking Feed {0} for Items.", url);
+                    OnFeedFound(url);
 
                     yield return new UrlAndFeed(url, syndicationFeed);
                 }
@@ -64,7 +63,7 @@ namespace ConsoleApplication
 
         public event Action<UrlAndFeed> Result;
         public event Action<int> SignalTotalCount;
-        public event Action OnFeedFound;
+        public event Action<string> OnFeedFound;
 
 
     }
