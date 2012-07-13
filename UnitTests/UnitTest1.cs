@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using npantarhei.runtime;
 using npantarhei.runtime.contract;
 using npantarhei.runtime.messagetypes;
+using npantarhei.runtime.patterns;
+using npantarhei.runtime.patterns.operations;
 
 namespace UnitTests
 {
@@ -19,25 +24,58 @@ namespace UnitTests
             using (var fr = new FlowRuntime())
             {
                 var frc = new FlowRuntimeConfiguration();
-                frc.AddStream(".in", "Add_Ebc1.process");
-                frc.AddStream("Add_Ebc1.result", "join.in0");
-                frc.AddStream("Add_Ebc1.result2", "join.in1");
-                frc.AddStream("join", ".out");
+                frc.AddStream(".in", "scatter");
+                frc.AddStream("scatter.stream", "Inc");
+                frc.AddStream("scatter.count", "gather.count");
+                frc.AddStream("Inc", "gather.stream");
+                frc.AddStream("gather", ".out");
                 
-                frc.AddAutoResetJoin<int, int>("join");
-                frc.AddEventBasedComponent("Add_Ebc1", new Add_Ebc());
+                frc.AddFunc<int, string>("Inc", convert);
+                //frc.AddFunc<int, string>("Inc", convert).MakeParallel();
+
+                frc.AddOperation(new Scatter<int>("scatter"));
+                frc.AddOperation(new Gather<string>("gather"));
                 
                 fr.Configure(frc);
 
-                fr.Process(new Message(".in", 1));
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                fr.Process(new Message(".in", new []{1, 2, 3, 4}));
+                string[] erg = null;
 
-                Tuple<int, int> erg = null;
+                fr.WaitForResult(_ => erg = (string[]) _.Data);
+                stopwatch.Stop();
 
-                fr.WaitForResult(_ => erg = (Tuple<int, int>) _.Data);
+                erg.Should().BeEquivalentTo(new object[]{"a", "b", "c", "d"});
 
-                erg.Should().Be(new Tuple<int, int>(2, 3));
-
+                var secs = stopwatch.ElapsedMilliseconds;
             }
+        }
+
+        private string convert(int arg)
+        {
+            if (arg == 1)
+            {
+                Thread.Sleep(100);
+                return "a";
+            }
+            if (arg == 2)
+            {
+                Thread.Sleep(100);
+                return "b";
+            }
+            if (arg == 3)
+            {
+                Thread.Sleep(100);
+                return "c";
+            }
+            if (arg == 4)
+            {
+                Thread.Sleep(100);
+                return "d";
+            }
+            
+            return "";
         }
 
         public class Add_Ebc
@@ -45,11 +83,22 @@ namespace UnitTests
             public void Process(int i)
             {
                 Result(i + 1);
-                Result2(i + 2);
             }
 
             public event Action<int> Result = _ => {};
-            public event Action<int> Result2 = _ => {};
+        }
+
+        public class AutoResetJoin<T0, T1, T2, T3> : AutoResetJoinBase
+        {
+            public AutoResetJoin(string name) : base(name, 4, Create_join_tuple) { }
+
+            private static object Create_join_tuple(List<object> joinList)
+            {
+                return new Tuple<T0, T1, T2, T3>((T0)joinList[0],
+                                             (T1)joinList[1],
+                                             (T2)joinList[2],
+                                             (T3)joinList[3]);
+            }
         }
     }
 
