@@ -1,6 +1,6 @@
 using System;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     internal class ReadPasswordFromConsole
     {

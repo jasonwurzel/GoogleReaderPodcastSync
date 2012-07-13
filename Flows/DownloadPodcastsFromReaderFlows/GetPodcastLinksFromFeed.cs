@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
-using ConsoleApplication;
 using GoogleReaderAPI2;
 using Tools.DnpExtensions;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     public class GetPodcastLinksFromFeed
     {

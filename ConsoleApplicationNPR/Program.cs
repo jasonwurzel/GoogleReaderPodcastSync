@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using ConsoleApplication;
+using System.Linq;
+using System.ServiceModel.Syndication;
+using Flows.DownloadPodcastsFromReaderFlows;
 using GoogleReaderAPI2;
 using npantarhei.runtime;
 using npantarhei.runtime.messagetypes;
@@ -10,85 +12,64 @@ namespace ConsoleApplicationNPR
 {
     internal class Program
     {
+        private static string _label;
+        private static string _email;
+        private static string _baseDirPath;
+        private static bool _deleteOlderFiles;
+        private static string _dateFormat;
+        private static int _getFilesFromTheLastXDays;
+        private static Reader _reader;
+
         private static void Main(string[] args)
         {
-            string email = ConfigurationManager.AppSettings["GoogleAccount"];
-            string baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
-            int itemsToGetPerFeed = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["ItemsPerFeed"]) ? "10" : ConfigurationManager.AppSettings["ItemsPerFeed"]);
-            var listenSubscriptions = "Listen Subscriptions";
-            int podCastsdownloaded = 0;
-            string dateFormat = "yyyyMMddTHHmmss";
-            int deleteFilesOlderThanXDays = int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["KeepFilesForXDays"]) ? "7" : ConfigurationManager.AppSettings["KeepFilesForXDays"]);
-            Reader reader = null;
+            _email = ConfigurationManager.AppSettings["GoogleAccount"];
+            _baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
+            _deleteOlderFiles = bool.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["DeleteOlderFiles"]) ? "false" : ConfigurationManager.AppSettings["DeleteOlderFiles"]);
+            _label = "Listen Subscriptions";
+            _dateFormat = "yyyyMMddTHHmmss";
+            _getFilesFromTheLastXDays =
+                int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]) ? "3" : ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]);
+            _reader = null;
 
-            Console.WriteLine("Enter password");
-            var password = Console.ReadLine();
+            //Console.WriteLine("Enter password");
+            var password = "sapchikauda";//  Console.ReadLine();
 
-            reader = Reader.CreateReader(email, password, "scroll") as Reader;
-
-            GetFeedsWithGivenLabel getFeedsWithGivenLabel = new GetFeedsWithGivenLabel(listenSubscriptions);
-            EnsureDownloadDirectoryForFeed ensureDownloadDirectoryForFeed = new EnsureDownloadDirectoryForFeed(baseDirPath);
-            //ClearDirectoryOfFiles clearDirectoryOfFilesOlderThan = new ClearDirectoryOfFiles(dirPath =>
-            //{
-            //    var list = new List<string>();
-            //    foreach (var filePath in Directory.GetFiles(dirPath))
-            //    {
-            //        var file = Path.GetFileName(filePath);
-            //        var dateString = file.Substring(0, dateFormat.Length);
-            //        DateTime dt = DateTime.ParseExact(dateString, dateFormat, CultureInfo.InvariantCulture);
-            //        if (dt < DateTime.Now.AddDays(-deleteFilesOlderThanXDays))
-            //            list.Add(filePath);
-            //    }
-            //    return list;
-            //});
-            //GetPodcastLinksFromFeed getPodcastLinksFromFeed = new GetPodcastLinksFromFeed(reader, itemsToGetPerFeed);
-            //GetRemoteAndLocalAddress getRemoteAndLocalAddress = new GetRemoteAndLocalAddress(link => link.PublishDate.ToString(dateFormat) + "_" + link.Title.ToValidFileName() + ".mp3");
-            //FilterExistingFiles filterExistingFiles = new FilterExistingFiles();
-            //DownloadFile downloadFile = new DownloadFile();
+            _reader = Reader.CreateReader(_email, password, "scroll") as Reader;
 
             using (var fr = new FlowRuntime())
             {
                 var frc = new FlowRuntimeConfiguration();
                 frc.AddStream(".in", "Get_Feeds");
-                frc.AddStream("Get_Feeds", "Ensure_Download_Directory");
-                frc.AddStream("Ensure_Download_Directory", ".out");
-                //frc.AddStream("Get_Feeds", "Get_Podcast_Links");
-                //frc.AddStream("Ensure_Download_Directory", "Tidy_Up_Directory");
-                //frc.AddStream("Get_Podcast_Links", "Remote_And_Local_Adress.Process_PodcastLinkInformation");
-                //frc.AddStream("Tidy_Up_Directory", "Remote_And_Local_Adress.Process_Local_Path");
-                //frc.AddStream("Remote_And_Local_Adress", "Filter_Existing_Files");
-                //frc.AddStream("Filter_Existing_Files.NonExistentFile", "DownloadFile");
-                //frc.AddStream("Filter_Existing_Files.NonExistentFile", "Increment_Download_Counter");
-                //frc.AddStream("Filter_Existing_Files.ExistingFile", "Clear");
+                frc.AddStream("Get_Feeds", ".out");
 
-                frc.AddFunc<Reader, IEnumerable<UrlAndFeed>>("Get_Feeds", getFeedsWithGivenLabel.ProcessNPR);
-                frc.AddFunc<UrlAndFeed, string>("Ensure_Download_Directory", urlAndFeed => ensureDownloadDirectoryForFeed.ProcessNPR(urlAndFeed.Feed));
+                frc.AddFunc<Reader, IEnumerable<UrlAndFeed>>("Get_Feeds", getFeedsWithGivenLabel);
 
                 fr.Configure(frc);
 
-                fr.Process(new Message(".in", reader));
+                fr.Process(new Message(".in", _reader));
 
                 fr.WaitForResult(5000, _ => Console.WriteLine(_.Data));
 
                 Console.ReadLine();
             }
+        }
 
-            //getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
-            //getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
-            //getFeedsWithGivenLabel.OnFeedFound += Console.Clear;
-            //ensureDownloadDirectoryForFeed.Result += clearDirectoryOfFilesOlderThan.Process;
-            //clearDirectoryOfFilesOlderThan.Result += getRemoteAndLocalAddress.ProcessDirPath;
-            //getPodcastLinksFromFeed.Result += getRemoteAndLocalAddress.ProcessPodcastLinkInformation;
-            //getRemoteAndLocalAddress.Result += filterExistingFiles.Process;
-            //filterExistingFiles.ResultForNotExistingFile += downloadFile.Process;
-            //filterExistingFiles.ResultForNotExistingFile += _ => podCastsdownloaded++;
-            //filterExistingFiles.ResultForExistingFile += _ => Console.Clear();
+        private static IEnumerable<UrlAndFeed> getFeedsWithGivenLabel(Reader reader)
+        {
+            var unreadFeeds = reader.GetUnreadFeeds();
 
-            //getFeedsWithGivenLabel.Process(reader);
+            List<SyndicationFeed> feeds =
+                unreadFeeds.
+                Select(unreadFeed => reader.GetFeed(unreadFeed.Url, 1)).
+                Where(syndicationFeed => syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label))).
+                ToList();
+            
+            foreach (var syndicationFeed in feeds)
+            {
+                string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
 
-            //Console.WriteLine("Podcasts downloaded: {0}", podCastsdownloaded);
-
-            //Console.ReadLine();
+                yield return new UrlAndFeed(url, syndicationFeed);
+            }
         }
     }
 }

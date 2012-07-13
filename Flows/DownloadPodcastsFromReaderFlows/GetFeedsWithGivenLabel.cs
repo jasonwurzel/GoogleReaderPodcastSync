@@ -4,7 +4,7 @@ using System.Linq;
 using System.ServiceModel.Syndication;
 using GoogleReaderAPI2;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     public class GetFeedsWithGivenLabel
     {

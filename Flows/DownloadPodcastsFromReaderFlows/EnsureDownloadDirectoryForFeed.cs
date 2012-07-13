@@ -3,7 +3,7 @@ using System.IO;
 using System.ServiceModel.Syndication;
 using Tools;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     public class EnsureDownloadDirectoryForFeed
     {

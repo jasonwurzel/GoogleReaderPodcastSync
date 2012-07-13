@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     public class FilterExistingFiles
     {

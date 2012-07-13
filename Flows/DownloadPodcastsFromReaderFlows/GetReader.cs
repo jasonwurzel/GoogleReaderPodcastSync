@@ -1,7 +1,7 @@
 using System;
 using GoogleReaderAPI2;
 
-namespace ConsoleApplication
+namespace Flows.DownloadPodcastsFromReaderFlows
 {
     public class GetReader
     {

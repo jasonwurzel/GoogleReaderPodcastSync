@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplicationNPR", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApplication", "WpfApplication\WpfApplication.csproj", "{D0D7D5E2-6AF9-445E-9D27-ADD758C7AC77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{7B433332-CF01-4D3C-886F-8BBE78DEC09D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,16 @@ Global
 		{49CE61F5-70F7-4144-8D2B-2DAE6400FBD8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{49CE61F5-70F7-4144-8D2B-2DAE6400FBD8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{49CE61F5-70F7-4144-8D2B-2DAE6400FBD8}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7B433332-CF01-4D3C-886F-8BBE78DEC09D}.Release|x86.ActiveCfg = Release|Any CPU
 		{D0D7D5E2-6AF9-445E-9D27-ADD758C7AC77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0D7D5E2-6AF9-445E-9D27-ADD758C7AC77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0D7D5E2-6AF9-445E-9D27-ADD758C7AC77}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

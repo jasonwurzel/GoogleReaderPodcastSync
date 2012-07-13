@@ -64,7 +64,7 @@ namespace WpfApplication
             {
                 WindowState = WindowState.Minimized;
                 this.ShowInTaskbar = false;
-                ShowTaskbarNotification("Minimiert", "App wurde minimiert");
+                ShowTaskbarNotification("Prüfe GoogleReader Account", "Bitte warten...");
             }
         }
 

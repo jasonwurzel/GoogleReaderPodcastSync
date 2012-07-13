@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ConsoleApplication;
+using Flows.DownloadPodcastsFromReaderFlows;
 using GoogleReaderAPI2;
 using Tools;
 using WpfApplication;
