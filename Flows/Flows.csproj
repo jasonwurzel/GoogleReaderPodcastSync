@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="npantarhei.runtime">
+      <HintPath>..\Tools\Ext\npantarhei.runtime.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -55,6 +58,16 @@
     <Compile Include="DownloadPodcastsFromReaderFlows\GetReader.cs" />
     <Compile Include="DownloadPodcastsFromReaderFlows\GetRemoteAndLocalAddress.cs" />
     <Compile Include="DownloadPodcastsFromReaderFlows\ReadPasswordFromConsole.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReader.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\ClearDirectoryOfFiles.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\DownloadFile.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\EnsureDownloadDirectoryForFeed.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\FilterExistingFiles.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\GetFeedsWithGivenLabel.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\GetPodcastLinksFromFeed.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\GetReader.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\GetRemoteAndLocalAddress.cs" />
+    <Compile Include="Npr\DownloadPodcastsFromReaderFlows\ReadPasswordFromConsole.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
