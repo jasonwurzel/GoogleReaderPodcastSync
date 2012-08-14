@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.ServiceModel.Syndication;
-using Flows.DownloadPodcastsFromReaderFlows;
 using GoogleReaderAPI2;
+using Repository;
 using npantarhei.runtime;
 using npantarhei.runtime.messagetypes;
 
@@ -68,7 +68,7 @@ namespace ConsoleApplicationNPR
             {
                 string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
 
-                yield return new UrlAndFeed(url, syndicationFeed);
+                yield return new UrlAndFeed(url, syndicationFeed.Title.Text);
             }
         }
     }

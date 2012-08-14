@@ -14,9 +14,9 @@ namespace Flows.DownloadPodcastsFromReaderFlows
             _baseDirPath = baseDirPath;
         }
 
-        public void Process(SyndicationFeed syndicationFeed)
+        public void Process(string syndicationFeed)
         {
-            string dirPath = Path.Combine(_baseDirPath, syndicationFeed.Title.Text.ToValidDirName());
+            string dirPath = Path.Combine(_baseDirPath, syndicationFeed.ToValidDirName());
             if (!Directory.Exists(dirPath))
                 Directory.CreateDirectory(dirPath);
             

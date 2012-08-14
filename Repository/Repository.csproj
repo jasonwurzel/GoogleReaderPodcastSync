@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D515E5E5-B15D-4C12-A5EE-C1FDE0A4C21A}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{32B06E26-542B-4AB0-BFD6-E2CEFF117351}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConsoleApplicationNPR</RootNamespace>
-    <AssemblyName>ConsoleApplicationNPR</AssemblyName>
+    <RootNamespace>Repository</RootNamespace>
+    <AssemblyName>Repository</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,11 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="npantarhei.runtime">
-      <HintPath>..\Tools\Ext\npantarhei.runtime.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml.Linq" />
@@ -46,24 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="UrlAndFeed.cs" />
+    <Compile Include="FeedRepository.cs" />
+    <Compile Include="IFeedRepository.cs" />
+    <Compile Include="PodcastLinkInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Flows\Flows.csproj">
-      <Project>{49CE61F5-70F7-4144-8D2B-2DAE6400FBD8}</Project>
-      <Name>Flows</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GoogleReaderAPI2\GoogleReaderAPI2.csproj">
       <Project>{0E3939A3-C7C3-447B-8978-C801DDB0BD07}</Project>
       <Name>GoogleReaderAPI2</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Repository\Repository.csproj">
-      <Project>{32B06E26-542B-4AB0-BFD6-E2CEFF117351}</Project>
-      <Name>Repository</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tools\Tools.csproj">
       <Project>{DCE66E14-9459-4BA9-B89E-7750D73C50BE}</Project>

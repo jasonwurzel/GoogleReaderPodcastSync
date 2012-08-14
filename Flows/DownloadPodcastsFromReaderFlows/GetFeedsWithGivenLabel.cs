@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
-using GoogleReaderAPI2;
+using Repository;
 
 namespace Flows.DownloadPodcastsFromReaderFlows
 {
@@ -15,51 +15,21 @@ namespace Flows.DownloadPodcastsFromReaderFlows
             _label = label;
         }
 
-        public void Process(Reader reader)
+        public void Process(IFeedRepository reader)
         {
-            var unreadFeeds = reader.GetUnreadFeeds();
-
-            List<SyndicationFeed> feeds =
-                unreadFeeds.
-                Select(unreadFeed => reader.GetFeed(unreadFeed.Url, 1)).
-                Where(syndicationFeed => syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label))).
-                ToList();
+            var feeds = reader.GetFeeds(_label);
 
             if (SignalTotalCount != null)
                 SignalTotalCount(feeds.Count());
 
-            foreach (var syndicationFeed in feeds)
+            foreach (var urlAndFeed in feeds)
             {
-                string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
-
                 if (OnFeedFound != null)
-                    OnFeedFound(url);
+                    OnFeedFound(urlAndFeed.Url);
 
-                Result(new UrlAndFeed(url, syndicationFeed));
+                Result(urlAndFeed);
             }
         }
-
-        /// <summary>
-        /// Testweise für NPR. TODO: Möglichkeit, das Process/Result Muster zu verwenden?
-        /// </summary>
-        /// <param name="reader"></param>
-        /// <returns></returns>
-        public IEnumerable<UrlAndFeed> ProcessNPR(Reader reader)
-        {
-            foreach (var unreadFeed in reader.GetUnreadFeeds())
-            {
-                // Leider Umweg nötig
-                var syndicationFeed = reader.GetFeed(unreadFeed.Url, 1);
-
-                if (syndicationFeed.Items.Any(item => item.Categories.Any(c => c.Label == _label)))
-                {
-                    string url = syndicationFeed.Links.First(l => l.RelationshipType == "self").Uri.ToString();
-                    OnFeedFound(url);
-
-                    yield return new UrlAndFeed(url, syndicationFeed);
-                }
-            }
-        } 
 
         public event Action<UrlAndFeed> Result;
         public event Action<int> SignalTotalCount;
@@ -68,17 +38,5 @@ namespace Flows.DownloadPodcastsFromReaderFlows
 
     }
 
-    public class UrlAndFeed
-    {
-        public UrlAndFeed(string url, SyndicationFeed syndicationFeed)
-        {
-            Url = url;
-            Feed = syndicationFeed;
-        }
-
-        public SyndicationFeed Feed { get; set; }
-
-        public string Url { get; set; }
-    }
 
 }

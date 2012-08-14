@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using Flows;
 using GoogleReaderAPI2;
+using Repository;
 using Tools;
 using Tools.DnpExtensions;
 using WpfApplication;
@@ -16,7 +17,7 @@ namespace ConsoleApplication
 {
     internal class Program
     {
-        private static Reader _reader;
+        private static IFeedRepository _reader;
         private static string _email;
         private static string _listenSubscriptions;
         private static string _baseDirPath;
@@ -45,7 +46,7 @@ namespace ConsoleApplication
 
         private static void WindowOnPasswordReceived(string password)
         {
-            _reader = Reader.CreateReader(_email, password, "scroll") as Reader;
+            _reader = new FeedRepository(Reader.CreateReader(_email, password, "scroll") as Reader);
 
             DownloadPodcastsFromReader downloadPodcastsFromReader = new DownloadPodcastsFromReader(_listenSubscriptions, _baseDirPath, _dateFormat, _deleteOlderFiles, _reader, _getFilesFromTheLastXDays, _window);
             downloadPodcastsFromReader.Process();

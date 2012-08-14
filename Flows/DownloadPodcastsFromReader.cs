@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using Flows.DownloadPodcastsFromReaderFlows;
-using GoogleReaderAPI2;
+using Repository;
 using Tools;
 using WpfApplication;
 using npantarhei.runtime;
@@ -17,11 +17,11 @@ namespace Flows
         private string _baseDirPath;
         private string _dateFormat;
         private bool _deleteOlderFiles;
-        private Reader _reader;
+        private IFeedRepository _reader;
         private int _getFilesFromTheLastXDays;
         private MainWindow _window;
 
-        public DownloadPodcastsFromReader(string label, string baseDirPath, string dateFormat, bool deleteOlderFiles, Reader reader, int getFilesFromTheLastXDays, MainWindow window)
+        public DownloadPodcastsFromReader(string label, string baseDirPath, string dateFormat, bool deleteOlderFiles, IFeedRepository reader, int getFilesFromTheLastXDays, MainWindow window)
         {
             _label = label;
             _baseDirPath = baseDirPath;
@@ -43,7 +43,7 @@ namespace Flows
             DownloadFile downloadFile1 = new DownloadFile();
             int totalDownloads = 0;
 
-            getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.Feed);
+            getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.FeedTitle);
             getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
 
             ensureDownloadDirectoryForFeed.Result += clearDirectoryOfFilesOlderThan.Process;
@@ -54,7 +54,7 @@ namespace Flows
             downloadFile1.Result += _ => totalDownloads++;
 
             getFeedsWithGivenLabel.OnFeedFound += s => _window.ShowTaskbarNotification("Checking Feed", string.Format("Address: {0}", s));
-            downloadFile1.OnDownloadStarting += address => _window.ShowTaskbarNotification("Starting Download", string.Format("Remote File: {0}", address.RemoteAddress));
+            downloadFile1.OnDownloadStarting += address => _window.ShowTaskbarNotification("Starting Download", string.Format("Local File: {0}", address.LocalAddress));
             //downloadFile1.OnDownloadFinished += address => _window.ShowTaskbarNotification("Finished Download", string.Format("Local File: {0}", address.LocalAddress));
 
             getFeedsWithGivenLabel.Process(_reader);

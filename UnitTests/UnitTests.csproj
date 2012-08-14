@@ -58,6 +58,25 @@
   <ItemGroup>
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTest2.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Flows\Flows.csproj">
+      <Project>{49CE61F5-70F7-4144-8D2B-2DAE6400FBD8}</Project>
+      <Name>Flows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleReaderAPI2\GoogleReaderAPI2.csproj">
+      <Project>{0E3939A3-C7C3-447B-8978-C801DDB0BD07}</Project>
+      <Name>GoogleReaderAPI2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Repository\Repository.csproj">
+      <Project>{32B06E26-542B-4AB0-BFD6-E2CEFF117351}</Project>
+      <Name>Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tools\Tools.csproj">
+      <Project>{DCE66E14-9459-4BA9-B89E-7750D73C50BE}</Project>
+      <Name>Tools</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
