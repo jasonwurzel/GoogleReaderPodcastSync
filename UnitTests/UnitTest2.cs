@@ -7,7 +7,7 @@ using System.Net;
 using System.Threading;
 using Flows.DownloadPodcastsFromReaderFlows;
 using GoogleReaderAPI2;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Repository;
 using Tools;
 using npantarhei.runtime;
@@ -18,16 +18,16 @@ using npantarhei.runtime.patterns.operations;
 
 namespace UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class UnitTest2
     {
         private IFeedRepository reader;
 
-        [TestMethod]
+        [Test]
         public void TestMethod1()
         {
             string email = "josefwurzel1980@googlemail.com";
-            string password = "kungfu96";
+            string password = "";
             reader = new FeedRepository(Reader.CreateReader(email, password, "scroll") as Reader);
             //reader = new FeedRepositoryForTests();
 
