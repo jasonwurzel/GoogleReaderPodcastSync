@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using Flows.DownloadPodcastsFromReaderFlows;
@@ -42,12 +41,10 @@ namespace Flows
             GetRemoteAndLocalAddress getRemoteAndLocalAddress = new GetRemoteAndLocalAddress(link => link.PublishDate.ToString(_dateFormat) + "_" + link.Title.ToValidFileName() + ".mp3");
             FilterExistingFiles filterExistingFiles = new FilterExistingFiles();
             DownloadFile downloadFile1 = new DownloadFile();
-			
             int totalDownloads = 0;
 
             getFeedsWithGivenLabel.Result += urlAndFeed => ensureDownloadDirectoryForFeed.Process(urlAndFeed.FeedTitle);
             getFeedsWithGivenLabel.Result += urlAndFeed => getPodcastLinksFromFeed.Process(urlAndFeed.Url);
-	        getFeedsWithGivenLabel.End += () => deleteEmptyDirs(_baseDirPath);
 
             ensureDownloadDirectoryForFeed.Result += clearDirectoryOfFilesOlderThan.Process;
             clearDirectoryOfFilesOlderThan.Result += getRemoteAndLocalAddress.ProcessDirPath;
@@ -64,14 +61,5 @@ namespace Flows
 
             _window.ShowTaskbarNotification("Alle Downloads fertig!", string.Format("Anzahl Downloads: {0}", totalDownloads), 1000);
         }
-
-	    private void deleteEmptyDirs(string baseDirPath)
-	    {
-		    var dirs = Directory.GetDirectories(baseDirPath).Where(d => Directory.GetFiles(d).Length == 0).ToList();
-		    foreach (var dir in dirs)
-		    {
-			    Directory.Delete(dir);
-		    }
-	    }
     }
 }

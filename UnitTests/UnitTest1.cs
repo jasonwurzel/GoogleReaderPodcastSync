@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using FluentAssertions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using npantarhei.runtime;
 using npantarhei.runtime.messagetypes;
 using npantarhei.runtime.patterns;
@@ -14,10 +14,10 @@ namespace UnitTests
     /// <summary>
     /// Tests, um die FlowRuntime zu verstehen ^^
     /// </summary>
-    [TestFixture]
+    [TestClass]
     public class UnitTest1
     {
-		[Test]
+        [TestMethod]
         public void TestMethodJoin01()
         {
             using (var fr = new FlowRuntime())
@@ -61,7 +61,7 @@ namespace UnitTests
         /// <summary>
         /// Komponente von Hand getestet...
         /// </summary>
-		[Test]
+        [TestMethod]
         public void TestAufteiler01()
         {
             List<string> ergebnisListe = new List<string>();
@@ -89,7 +89,7 @@ namespace UnitTests
         /// <summary>
         /// Komponente von Hand getestet...
         /// </summary>
-		[Test]
+        [TestMethod]
         public void TestAufteiler02()
         {
             List<int> ergebnisListe = new List<int>();
@@ -130,7 +130,7 @@ namespace UnitTests
         /// <summary>
         /// Basic Test zur Integration des Aufteilers in die FlowRuntime
         /// </summary>
-		[Test]
+        [TestMethod]
         public void TestAufteilerFlow01()
         {
             List<int> ergebnisListe = new List<int>();

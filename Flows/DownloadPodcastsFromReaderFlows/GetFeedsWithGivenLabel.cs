@@ -29,14 +29,11 @@ namespace Flows.DownloadPodcastsFromReaderFlows
 
                 Result(urlAndFeed);
             }
-
-	        End();
         }
 
         public event Action<UrlAndFeed> Result;
         public event Action<int> SignalTotalCount;
         public event Action<string> OnFeedFound;
-	    public event Action End;
 
 
     }
