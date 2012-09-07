@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using Flows;
 using GoogleReaderAPI2;
 using Repository;
@@ -29,19 +30,26 @@ namespace ConsoleApplication
         [STAThread]
         private static void Main(string[] args)
         {
-            _email = ConfigurationManager.AppSettings["GoogleAccount"];
-            _baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
-            _deleteOlderFiles = bool.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["DeleteOlderFiles"]) ? "false" : ConfigurationManager.AppSettings["DeleteOlderFiles"]);
-            _listenSubscriptions = "Listen Subscriptions";
-            _dateFormat = "yyyyMMddTHHmmss";
-            _getFilesFromTheLastXDays =
-                int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]) ? "3" : ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]);
-            _reader = null;
+			try
+			{
+				_email = ConfigurationManager.AppSettings["GoogleAccount"];
+				_baseDirPath = String.IsNullOrEmpty(ConfigurationManager.AppSettings["BasePath"]) ? @"c:\temp\" : ConfigurationManager.AppSettings["BasePath"];
+				_deleteOlderFiles = bool.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["DeleteOlderFiles"]) ? "false" : ConfigurationManager.AppSettings["DeleteOlderFiles"]);
+				_listenSubscriptions = "Listen Subscriptions";
+				_dateFormat = "yyyyMMddTHHmmss";
+				_getFilesFromTheLastXDays =
+					int.Parse(String.IsNullOrEmpty(ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]) ? "3" : ConfigurationManager.AppSettings["GetFilesFromTheLastXDays"]);
+				_reader = null;
 
-            MainWindow window = new MainWindow();
-            _window = window;
-            window.PasswordReceived += WindowOnPasswordReceived;
-            window.ShowDialog();
+				MainWindow window = new MainWindow();
+				_window = window;
+				window.PasswordReceived += WindowOnPasswordReceived;
+				window.ShowDialog();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
         }
 
         private static void WindowOnPasswordReceived(string password)
